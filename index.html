@@ -21,22 +21,60 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            perspective: 1000px;
         }
         
         body[data-lang="kr"] {
             font-family: 'Noto Sans KR', sans-serif;
         }
         
+        .flip-card {
+            background-color: transparent;
+            width: 400px;
+            height: 500px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        
         .wedding-card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
             width: 100%;
+            height: 100%;
             padding: 40px;
             text-align: center;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .wedding-card::before {
@@ -89,17 +127,17 @@
         
         .names {
             font-family: 'Dancing Script', cursive;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             color: #8b4513;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-weight: 700;
             line-height: 1.2;
         }
         
         .heart {
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: #ff69b4;
-            margin: 10px 0;
+            margin: 15px 0;
             animation: pulse 2s infinite;
         }
         
@@ -108,25 +146,43 @@
             50% { transform: scale(1.2); }
         }
         
+        .flip-hint {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #999;
+            font-style: italic;
+            opacity: 0.7;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+        
         .date-time {
-            font-size: 1rem;
-            color: #555;
-            margin: 20px 0;
-            line-height: 1.6;
+            font-size: 0.8rem;
+            color: #777;
+            margin: 10px 0;
+            line-height: 1.5;
             font-weight: 400;
         }
         
         .venue {
-            font-size: 1rem;
+            font-size: 0.8rem;
             color: #777;
-            margin-top: 15px;
+            margin: 1px 0;
             line-height: 1.5;
         }
         
         .floral-accent {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 15px;
+            left: 15px;
             font-size: 2rem;
             opacity: 0.2;
             animation: float 3s ease-in-out infinite;
@@ -134,8 +190,8 @@
         
         .floral-accent:nth-child(3) {
             top: auto;
-            bottom: 10px;
-            right: 10px;
+            bottom: 15px;
+            right: 15px;
             left: auto;
             animation-delay: 1.5s;
         }
@@ -146,84 +202,134 @@
         }
         
         .divider {
-            width: 80px;
+            width: 100px;
             height: 2px;
             background: linear-gradient(to right, transparent, #d4af37, transparent);
-            margin: 20px auto;
+            margin: 25px auto;
         }
         
         .invitation-header {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #999;
-            margin-bottom: 15px;
-            margin-top: 10px;
+            margin-bottom: 20px;
             font-weight: 300;
             text-align: center;
         }
         
         .invitation-text {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: #666;
             margin: 20px auto;
-            line-height: 1.4;
+            line-height: 1.5;
             font-style: italic;
-            max-width: 280px;
+            max-width: 300px;
+        }
+        
+        .back-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+        
+        .back-flip-hint {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #999;
+            font-style: italic;
+            opacity: 0.7;
+            display: none;
         }
         
         @media (max-width: 480px) {
+            .flip-card {
+                width: 350px;
+                height: 450px;
+            }
+            
             .wedding-card {
                 padding: 30px 20px;
-                margin: 10px;
             }
             
             .names {
-                font-size: 1.8rem;
+                font-size: 2rem;
+            }
+            
+            .heart {
+                font-size: 2rem;
             }
             
             .date-time {
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="wedding-card">
-        <div class="decorative-border"></div>
-        <div class="language-selector">
-            <select id="languageSelect" onchange="changeLanguage(this.value)">
-                <option value="auto">Auto</option>
-                <option value="en">English</option>
-                <option value="kr">한국어</option>
-                <option value="uz">O'zbekcha</option>
-                <option value="ru">Русский</option>
-            </select>
-        </div>
-        <div class="floral-accent">🌸</div>
-        <div class="floral-accent">🌿</div>
-        
-        <div class="content">
-            <div class="invitation-header" id="invitationHeader">Wedding Invitation</div>
-            
-            <div class="names">Kamoliddin</div>
-            <div class="heart">♥</div>
-            <div class="names" id="brideName">Gulirukhsor</div>
-            
-            <div class="invitation-text" id="invitationText">
-                We joyfully request your presence at our wedding ceremony
+    <div class="flip-card" id="flipCard" onclick="flipCard()">
+        <div class="flip-card-inner">
+            <!-- Front Side -->
+            <div class="flip-card-front">
+                <div class="wedding-card">
+                    <div class="decorative-border"></div>
+                    <div class="language-selector">
+                        <select id="languageSelect" onchange="changeLanguage(this.value)" onclick="event.stopPropagation()">
+                            <option value="auto">Auto</option>
+                            <option value="en">English</option>
+                            <option value="kr">한국어</option>
+                            <option value="uz">O'zbekcha</option>
+                            <option value="ru">Русский</option>
+                        </select>
+                    </div>
+                    <div class="floral-accent">🌸</div>
+                    <div class="floral-accent">🌿</div>
+                    
+                    <div class="content">
+                        <div class="invitation-header" id="frontHeader">Wedding Invitation</div>
+                        
+                        <div class="names" id="groomName">Kamoliddin</div>
+                        <div class="heart">♥</div>
+                        <div class="names" id="brideName">Gulirukhsor</div>
+                        <div style="margin-bottom: 30px;"></div>
+                        
+                        <div class="flip-hint" id="flipHint">Click to see details</div>
+                    </div>
+                </div>
             </div>
             
-            <div class="divider"></div>
-            
-            <div class="date-time" id="dateTime">
-                September 12, 2025, Friday<br>
-                1:00 PM
-            </div>
-            
-            <div class="divider"></div>
-            
-            <div class="venue" id="venue">
-                Rolla Wedding Hall<br>
-                Fergana, Uzbekistan
+            <!-- Back Side -->
+            <div class="flip-card-back">
+                <div class="wedding-card">
+                    <div class="decorative-border"></div>
+                    <div class="floral-accent">🌸</div>
+                    <div class="floral-accent">🌿</div>
+                    
+                    <div class="content back-content">
+                        <div class="invitation-header" id="invitationHeader">Wedding Invitation</div>
+                        
+                        <div class="divider"></div>
+
+                        <div class="invitation-text" id="invitationText">
+                            We joyfully request your presence at our wedding ceremony
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="date-time" id="dateTime">
+                            September 12, 2025, Friday, 1:00 PM
+                        </div>
+                        
+                        <div class="venue" id="venue">
+                            Sardor Wedding Hall<br>
+                            Fergana, Uzbekistan
+                        </div>
+                        
+                        <div class="back-flip-hint" id="backFlipHint">Click to go back</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -232,35 +338,51 @@
         const translations = {
             en: {
                 title: "Kamoliddin & Gulirukhsor Wedding Day",
+                frontHeader: "Wedding Invitation",
                 invitationHeader: "Wedding Invitation",
+                groomName: "Kamoliddin",
                 brideName: "Gulirukhsor",
                 invitationText: "We joyfully request your presence at our wedding ceremony",
                 dateTime: "September 12, 2025, Friday<br>1:00 PM",
-                venue: "Sardor Wedding Hall<br>Fergana, Uzbekistan"
+                venue: "Sardor Wedding Hall<br>Fergana, Uzbekistan",
+                flipHint: "Click to see details",
+                backFlipHint: "Click to go back"
             },
             kr: {
                 title: "카몰리딘 & 굴리루크소르 결혼식",
+                frontHeader: "결혼식 초대장",
                 invitationHeader: "결혼식 초대장",
+                groomName: "Kamoliddin",
                 brideName: "Gulirukhsor",
                 invitationText: "저희의 결혼식에 참석하여 축복해 주시기를 정중히 요청드립니다",
                 dateTime: "2025년 9월 12일 금요일<br>오후 1시",
-                venue: "사르도르 웨딩홀<br>페르가나, 우즈베키스탄"
+                venue: "사르도르 웨딩홀<br>페르가나, 우즈베키스탄",
+                flipHint: "클릭하여 세부 정보 보기",
+                backFlipHint: "클릭하여 돌아가기"
             },
             uz: {
                 title: "Kamoliddin va Guliruxsor nigoh kuni",
+                frontHeader: "Taklifnoma",
                 invitationHeader: "Taklifnoma",
+                groomName: "Kamoliddin",
                 brideName: "Guliruxsor",
                 invitationText: "Sizni to'y marosimimizda qatnashishga samimiy taklif etamiz",
                 dateTime: "2025-yil 12-sentabr, juma<br>Soat 13:00",
-                venue: "Sardor to'y zali<br>Farg'ona, O'zbekiston"
+                venue: "Sardor to'y zali<br>Farg'ona, O'zbekiston",
+                flipHint: "Tafsilotlar uchun bosing",
+                backFlipHint: "Orqaga qaytish uchun bosing"
             },
             ru: {
                 title: "Свадьба Камолиддина и Гулирухсор",
-                brideName: "Гулирухсор",
+                frontHeader: "Свадебное приглашение",
                 invitationHeader: "Свадебное приглашение",
+                groomName: "Kamoliddin",
+                brideName: "Guliruxsor",
                 invitationText: "С радостью приглашаем Вас разделить с нами этот торжественный день",
                 dateTime: "12 сентября 2025, пятница<br>13:00",
-                venue: "Свадебный зал Сардор<br>Фергана, Узбекистан"
+                venue: "Свадебный зал Сардор<br>Фергана, Узбекистан",
+                flipHint: "Нажмите для деталей",
+                backFlipHint: "Нажмите, чтобы вернуться"
             }
         };
 
@@ -274,6 +396,11 @@
             return 'en';
         }
 
+        function flipCard() {
+            const card = document.getElementById('flipCard');
+            card.classList.toggle('flipped');
+        }
+
         function changeLanguage(lang) {
             if (lang === 'auto') {
                 lang = detectLanguage();
@@ -283,11 +410,19 @@
             if (!translation) return;
             
             // Update content
+            document.getElementById('frontHeader').textContent = translation.frontHeader;
             document.getElementById('invitationHeader').textContent = translation.invitationHeader;
             document.getElementById('invitationText').textContent = translation.invitationText;
             document.getElementById('dateTime').innerHTML = translation.dateTime;
             document.getElementById('venue').innerHTML = translation.venue;
+            document.getElementById('flipHint').textContent = translation.flipHint;
+            document.getElementById('backFlipHint').textContent = translation.backFlipHint;
             document.title = translation.title;
+            
+            const groomNameElement = document.getElementById('groomName');
+            if (groomNameElement && translation.groomName) {
+                groomNameElement.textContent = translation.groomName;
+            }
             
             const brideNameElement = document.getElementById('brideName');
             if (brideNameElement && translation.brideName) {
@@ -313,7 +448,6 @@
                 document.getElementById('languageSelect').value = 'auto';
             }
             
-            // Make sure we initialize all content including the bride's name
             changeLanguage(currentLang);
         }
 
