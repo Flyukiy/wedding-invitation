@@ -73,8 +73,8 @@
         
         .language-selector {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
             z-index: 10;
         }
         
@@ -109,7 +109,7 @@
         }
         
         .date-time {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: #555;
             margin: 20px 0;
             line-height: 1.6;
@@ -156,7 +156,18 @@
             font-size: 0.9rem;
             color: #999;
             margin-bottom: 15px;
+            margin-top: 10px;
             font-weight: 300;
+            text-align: center;
+        }
+        
+        .invitation-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 20px auto;
+            line-height: 1.4;
+            font-style: italic;
+            max-width: 280px;
         }
         
         @media (max-width: 480px) {
@@ -197,6 +208,10 @@
             <div class="heart">♥</div>
             <div class="names">Gulirukhsor</div>
             
+            <div class="invitation-text" id="invitationText">
+                We joyfully request your presence at our wedding ceremony
+            </div>
+            
             <div class="divider"></div>
             
             <div class="date-time" id="dateTime">
@@ -218,26 +233,30 @@
             en: {
                 title: "Kamoliddin & Gulirukhsor Wedding Day",
                 invitationHeader: "Wedding Invitation",
+                invitationText: "We joyfully request your presence at our wedding ceremony",
                 dateTime: "September 12, 2025, Friday<br>1:00 PM",
-                venue: "Rolla Wedding Hall<br>Fergana, Uzbekistan"
+                venue: "Sardor Wedding Hall<br>Fergana, Uzbekistan"
             },
             kr: {
                 title: "카몰리딘 & 굴리루크소르 결혼식",
                 invitationHeader: "결혼식 초대장",
+                invitationText: "저희의 결혼식에 참석하여 축복해 주시기를 정중히 요청드립니다",
                 dateTime: "2025년 9월 12일 금요일<br>오후 1시",
-                venue: "롤라 웨딩홀<br>페르가나, 우즈베키스탄"
+                venue: "사르도르 웨딩홀<br>페르가나, 우즈베키스탄"
             },
             uz: {
                 title: "Kamoliddin va Gulirukhsor to'yi",
                 invitationHeader: "To'y taklifi",
+                invitationText: "Sizni to'y marosimimizda qatnashishga samimiy taklif etamiz",
                 dateTime: "2025-yil 12-sentabr, juma<br>Soat 13:00",
-                venue: "Rolla to'y zali<br>Farg'ona, O'zbekiston"
+                venue: "Sardor to'y zali<br>Farg'ona, O'zbekiston"
             },
             ru: {
                 title: "Свадьба Камолиддина и Гулирухсор",
                 invitationHeader: "Свадебное приглашение",
+                invitationText: "С радостью приглашаем Вас разделить с нами этот торжественный день",
                 dateTime: "12 сентября 2025, пятница<br>13:00",
-                venue: "Свадебный зал Ролла<br>Фергана, Узбекистан"
+                venue: "Свадебный зал Сардор<br>Фергана, Узбекистан"
             }
         };
 
@@ -261,6 +280,7 @@
             
             // Update content
             document.getElementById('invitationHeader').textContent = translation.invitationHeader;
+            document.getElementById('invitationText').textContent = translation.invitationText;
             document.getElementById('dateTime').innerHTML = translation.dateTime;
             document.getElementById('venue').innerHTML = translation.venue;
             document.title = translation.title;
