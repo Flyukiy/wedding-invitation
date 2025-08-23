@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kamol & Guli Wedding Day</title>
+    <title>Kamoliddin & Gulirukhsor Wedding Day</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Noto+Sans+KR:wght@300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Noto+Sans+KR:wght@300;400;500&family=Noto+Sans:wght@300;400;500&display=swap');
         
         * {
             margin: 0;
@@ -14,13 +14,17 @@
         }
         
         body {
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Noto Sans', sans-serif;
             background: linear-gradient(135deg, #f5f2f0, #e8ddd4);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+        }
+        
+        body[data-lang="kr"] {
+            font-family: 'Noto Sans KR', sans-serif;
         }
         
         .wedding-card {
@@ -67,12 +71,29 @@
             z-index: 2;
         }
         
+        .language-selector {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+        
+        .language-selector select {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #d4af37;
+            border-radius: 5px;
+            padding: 5px 8px;
+            font-size: 0.8rem;
+            color: #8b4513;
+        }
+        
         .names {
             font-family: 'Dancing Script', cursive;
-            font-size: 3rem;
+            font-size: 2.2rem;
             color: #8b4513;
             margin-bottom: 10px;
             font-weight: 700;
+            line-height: 1.2;
         }
         
         .heart {
@@ -105,17 +126,17 @@
         .floral-accent {
             position: absolute;
             top: 10px;
-            right: 10px;
+            left: 10px;
             font-size: 2rem;
             opacity: 0.2;
             animation: float 3s ease-in-out infinite;
         }
         
-        .floral-accent:nth-child(2) {
+        .floral-accent:nth-child(3) {
             top: auto;
             bottom: 10px;
-            left: 10px;
-            right: auto;
+            right: 10px;
+            left: auto;
             animation-delay: 1.5s;
         }
         
@@ -131,6 +152,13 @@
             margin: 20px auto;
         }
         
+        .invitation-header {
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+        
         @media (max-width: 480px) {
             .wedding-card {
                 padding: 30px 20px;
@@ -138,7 +166,7 @@
             }
             
             .names {
-                font-size: 2.5rem;
+                font-size: 1.8rem;
             }
             
             .date-time {
@@ -150,28 +178,117 @@
 <body>
     <div class="wedding-card">
         <div class="decorative-border"></div>
+        <div class="language-selector">
+            <select id="languageSelect" onchange="changeLanguage(this.value)">
+                <option value="auto">Auto</option>
+                <option value="en">English</option>
+                <option value="kr">한국어</option>
+                <option value="uz">O'zbekcha</option>
+                <option value="ru">Русский</option>
+            </select>
+        </div>
         <div class="floral-accent">🌸</div>
         <div class="floral-accent">🌿</div>
         
         <div class="content">
+            <div class="invitation-header" id="invitationHeader">Wedding Invitation</div>
+            
             <div class="names">Kamoliddin</div>
             <div class="heart">♥</div>
             <div class="names">Gulirukhsor</div>
             
             <div class="divider"></div>
             
-            <div class="date-time">
-                2025년 9월 12일 금요일<br>
-                오후 1시
+            <div class="date-time" id="dateTime">
+                September 12, 2025, Friday<br>
+                1:00 PM
             </div>
             
             <div class="divider"></div>
             
-            <div class="venue">
-                롤라 웨딩홀<br>
-                페르가나, 우즈베키스탄
+            <div class="venue" id="venue">
+                Rolla Wedding Hall<br>
+                Fergana, Uzbekistan
             </div>
         </div>
     </div>
+
+    <script>
+        const translations = {
+            en: {
+                title: "Kamoliddin & Gulirukhsor Wedding Day",
+                invitationHeader: "Wedding Invitation",
+                dateTime: "September 12, 2025, Friday<br>1:00 PM",
+                venue: "Rolla Wedding Hall<br>Fergana, Uzbekistan"
+            },
+            kr: {
+                title: "카몰리딘 & 굴리루크소르 결혼식",
+                invitationHeader: "결혼식 초대장",
+                dateTime: "2025년 9월 12일 금요일<br>오후 1시",
+                venue: "롤라 웨딩홀<br>페르가나, 우즈베키스탄"
+            },
+            uz: {
+                title: "Kamoliddin va Gulirukhsor to'yi",
+                invitationHeader: "To'y taklifi",
+                dateTime: "2025-yil 12-sentabr, juma<br>Soat 13:00",
+                venue: "Rolla to'y zali<br>Farg'ona, O'zbekiston"
+            },
+            ru: {
+                title: "Свадьба Камолиддина и Гулирухсор",
+                invitationHeader: "Свадебное приглашение",
+                dateTime: "12 сентября 2025, пятница<br>13:00",
+                venue: "Свадебный зал Ролла<br>Фергана, Узбекистан"
+            }
+        };
+
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.languages[0];
+            const langCode = browserLang.toLowerCase();
+            
+            if (langCode.includes('ko')) return 'kr';
+            if (langCode.includes('uz')) return 'uz';
+            if (langCode.includes('ru')) return 'ru';
+            return 'en'; // Default to English
+        }
+
+        function changeLanguage(lang) {
+            if (lang === 'auto') {
+                lang = detectLanguage();
+            }
+            
+            const translation = translations[lang];
+            if (!translation) return;
+            
+            // Update content
+            document.getElementById('invitationHeader').textContent = translation.invitationHeader;
+            document.getElementById('dateTime').innerHTML = translation.dateTime;
+            document.getElementById('venue').innerHTML = translation.venue;
+            document.title = translation.title;
+            
+            // Update body data attribute for font family
+            document.body.setAttribute('data-lang', lang);
+            
+            // Store language preference
+            localStorage.setItem('preferredLanguage', lang);
+        }
+
+        function initializeLanguage() {
+            const savedLang = localStorage.getItem('preferredLanguage');
+            let currentLang;
+            
+            if (savedLang && savedLang !== 'auto') {
+                currentLang = savedLang;
+                document.getElementById('languageSelect').value = savedLang;
+            } else {
+                currentLang = detectLanguage();
+                document.getElementById('languageSelect').value = 'auto';
+            }
+            
+            changeLanguage(currentLang);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeLanguage);
+    </script>
 </body>
 </html>
