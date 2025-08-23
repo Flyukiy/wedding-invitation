@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kamol & Guli Wedding Day</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Noto+Sans+KR:wght@300;400;500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #f5f2f0, #e8ddd4);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .wedding-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .wedding-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 192, 203, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .decorative-border {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 2px solid #d4af37;
+            border-radius: 15px;
+            opacity: 0.3;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .names {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: #8b4513;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .heart {
+            font-size: 2rem;
+            color: #ff69b4;
+            margin: 10px 0;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .date-time {
+            font-size: 1.2rem;
+            color: #555;
+            margin: 20px 0;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        
+        .venue {
+            font-size: 1rem;
+            color: #777;
+            margin-top: 15px;
+            line-height: 1.5;
+        }
+        
+        .floral-accent {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2rem;
+            opacity: 0.2;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .floral-accent:nth-child(2) {
+            top: auto;
+            bottom: 10px;
+            left: 10px;
+            right: auto;
+            animation-delay: 1.5s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .divider {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #d4af37, transparent);
+            margin: 20px auto;
+        }
+        
+        @media (max-width: 480px) {
+            .wedding-card {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .names {
+                font-size: 2.5rem;
+            }
+            
+            .date-time {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wedding-card">
+        <div class="decorative-border"></div>
+        <div class="floral-accent">🌸</div>
+        <div class="floral-accent">🌿</div>
+        
+        <div class="content">
+            <div class="names">Kamoliddin</div>
+            <div class="heart">♥</div>
+            <div class="names">Gulirukhsor</div>
+            
+            <div class="divider"></div>
+            
+            <div class="date-time">
+                2025년 9월 12일 금요일<br>
+                오후 1시
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="venue">
+                롤라 웨딩홀<br>
+                페르가나, 우즈베키스탄
+            </div>
+        </div>
+    </div>
+</body>
+</html>
