@@ -206,7 +206,7 @@
             
             <div class="names">Kamoliddin</div>
             <div class="heart">♥</div>
-            <div class="names">Gulirukhsor</div>
+            <div class="names" id="brideName">Gulirukhsor</div>
             
             <div class="invitation-text" id="invitationText">
                 We joyfully request your presence at our wedding ceremony
@@ -233,6 +233,7 @@
             en: {
                 title: "Kamoliddin & Gulirukhsor Wedding Day",
                 invitationHeader: "Wedding Invitation",
+                brideName: "Gulirukhsor",
                 invitationText: "We joyfully request your presence at our wedding ceremony",
                 dateTime: "September 12, 2025, Friday<br>1:00 PM",
                 venue: "Sardor Wedding Hall<br>Fergana, Uzbekistan"
@@ -240,19 +241,22 @@
             kr: {
                 title: "카몰리딘 & 굴리루크소르 결혼식",
                 invitationHeader: "결혼식 초대장",
+                brideName: "Gulirukhsor",
                 invitationText: "저희의 결혼식에 참석하여 축복해 주시기를 정중히 요청드립니다",
                 dateTime: "2025년 9월 12일 금요일<br>오후 1시",
                 venue: "사르도르 웨딩홀<br>페르가나, 우즈베키스탄"
             },
             uz: {
-                title: "Kamoliddin va Gulirukhsor to'yi",
-                invitationHeader: "To'y taklifi",
+                title: "Kamoliddin va Guliruxsor nigoh kuni",
+                invitationHeader: "Taklifnoma",
+                brideName: "Guliruxsor",
                 invitationText: "Sizni to'y marosimimizda qatnashishga samimiy taklif etamiz",
                 dateTime: "2025-yil 12-sentabr, juma<br>Soat 13:00",
                 venue: "Sardor to'y zali<br>Farg'ona, O'zbekiston"
             },
             ru: {
                 title: "Свадьба Камолиддина и Гулирухсор",
+                brideName: "Гулирухсор",
                 invitationHeader: "Свадебное приглашение",
                 invitationText: "С радостью приглашаем Вас разделить с нами этот торжественный день",
                 dateTime: "12 сентября 2025, пятница<br>13:00",
@@ -267,7 +271,7 @@
             if (langCode.includes('ko')) return 'kr';
             if (langCode.includes('uz')) return 'uz';
             if (langCode.includes('ru')) return 'ru';
-            return 'en'; // Default to English
+            return 'en';
         }
 
         function changeLanguage(lang) {
@@ -284,6 +288,11 @@
             document.getElementById('dateTime').innerHTML = translation.dateTime;
             document.getElementById('venue').innerHTML = translation.venue;
             document.title = translation.title;
+            
+            const brideNameElement = document.getElementById('brideName');
+            if (brideNameElement && translation.brideName) {
+                brideNameElement.textContent = translation.brideName;
+            }
             
             // Update body data attribute for font family
             document.body.setAttribute('data-lang', lang);
@@ -304,6 +313,7 @@
                 document.getElementById('languageSelect').value = 'auto';
             }
             
+            // Make sure we initialize all content including the bride's name
             changeLanguage(currentLang);
         }
 
