@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kamoliddin & Gulirukhsor Wedding Day</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Noto+Sans+KR:wght@300;400;500&family=Noto+Sans:wght@300;400;500&display=swap');
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
+        html, body {
+            height: 100%;
+        }
+
         body {
             font-family: 'Noto Sans', sans-serif;
             background: linear-gradient(135deg, #f5f2f0, #e8ddd4);
@@ -21,21 +25,26 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            perspective: 1000px;
+            /* iOS: avoid nested 3D here */
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            -webkit-tap-highlight-color: transparent;
         }
-        
+
         body[data-lang="kr"] {
             font-family: 'Noto Sans KR', sans-serif;
         }
-        
+
         .flip-card {
             background-color: transparent;
             width: 400px;
             height: 500px;
             perspective: 1000px;
+            -webkit-perspective: 1000px; /* iOS */
             cursor: pointer;
+            touch-action: manipulation; /* faster tapping */
         }
-        
+
         .flip-card-inner {
             position: relative;
             width: 100%;
@@ -43,27 +52,48 @@
             text-align: center;
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform-style: preserve-3d;
+            -webkit-transform-style: preserve-3d; /* iOS */
+            will-change: transform;
         }
-        
+
         .flip-card.flipped .flip-card-inner {
             transform: rotateY(180deg);
+            -webkit-transform: rotateY(180deg); /* iOS */
         }
-        
-        .flip-card-front, .flip-card-back {
+
+        .flip-card-front,
+        .flip-card-back {
             position: absolute;
             width: 100%;
             height: 100%;
-            -webkit-backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* iOS */
             backface-visibility: hidden;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             overflow: hidden;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0); /* iOS compositing */
+            will-change: transform;
         }
-        
+
+        .flip-card-front {
+            transform: rotateY(0deg) translateZ(0.01px);
+            -webkit-transform: rotateY(0deg) translateZ(0.01px);
+        }
+
         .flip-card-back {
-            transform: rotateY(180deg);
+            transform: rotateY(180deg) translateZ(0.01px);
+            -webkit-transform: rotateY(180deg) translateZ(0.01px);
         }
-        
+
+        /* iOS border-radius + 3D clipping fix */
+        @supports (-webkit-touch-callout: none) {
+            .flip-card-front,
+            .flip-card-back {
+                -webkit-mask-image: -webkit-radial-gradient(white, black);
+            }
+        }
+
         .wedding-card {
             background: white;
             width: 100%;
@@ -75,8 +105,10 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
-        
+
         .wedding-card::before {
             content: '';
             position: absolute;
@@ -86,13 +118,14 @@
             height: 200%;
             background: linear-gradient(45deg, transparent, rgba(255, 192, 203, 0.1), transparent);
             animation: shimmer 3s infinite;
+            pointer-events: none; /* never block taps */
         }
-        
+
         @keyframes shimmer {
             0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
             100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
-        
+
         .decorative-border {
             position: absolute;
             top: 20px;
@@ -102,29 +135,33 @@
             border: 2px solid #d4af37;
             border-radius: 15px;
             opacity: 0.3;
+            pointer-events: none;
         }
-        
+
         .content {
             position: relative;
             z-index: 2;
         }
-        
+
         .language-selector {
             position: absolute;
             top: 15px;
             right: 15px;
-            z-index: 10;
+            z-index: 20; /* above everything */
         }
-        
+
         .language-selector select {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             border: 1px solid #d4af37;
             border-radius: 5px;
             padding: 5px 8px;
             font-size: 0.8rem;
             color: #8b4513;
+            -webkit-appearance: none;
+            appearance: none;
+            pointer-events: auto; /* ensure selectable on iOS */
         }
-        
+
         .names {
             font-family: 'Dancing Script', cursive;
             font-size: 2.5rem;
@@ -133,22 +170,21 @@
             font-weight: 700;
             line-height: 1.2;
         }
-        
+
         .heart {
             font-size: 2.5rem;
             color: #c0598c;
             margin: 15px 0;
             animation: pulse 2s infinite;
         }
-        
+
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.2); }
         }
-        
+
         .flip-hint {
             position: absolute;
-            bottom: -50px;
             left: 50%;
             transform: translateX(-50%);
             font-size: 0.8rem;
@@ -156,14 +192,15 @@
             font-style: italic;
             opacity: 0.7;
             animation: bounce 2s infinite;
+            pointer-events: none;
         }
-        
+
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
             40% { transform: translateX(-50%) translateY(-10px); }
             60% { transform: translateX(-50%) translateY(-5px); }
         }
-        
+
         .date-time {
             font-size: 0.8rem;
             color: #777;
@@ -171,14 +208,14 @@
             line-height: 1.5;
             font-weight: 400;
         }
-        
+
         .venue {
             font-size: 0.8rem;
             color: #777;
             margin: 1px 0;
             line-height: 1.5;
         }
-        
+
         .floral-accent {
             position: absolute;
             top: 15px;
@@ -186,8 +223,9 @@
             font-size: 2rem;
             opacity: 0.2;
             animation: float 3s ease-in-out infinite;
+            pointer-events: none;
         }
-        
+
         .floral-accent:nth-child(3) {
             top: auto;
             bottom: 15px;
@@ -195,19 +233,19 @@
             left: auto;
             animation-delay: 1.5s;
         }
-        
+
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
         }
-        
+
         .divider {
             width: 100px;
             height: 2px;
             background: linear-gradient(to right, transparent, #d4af37, transparent);
             margin: 25px auto;
         }
-        
+
         .invitation-header {
             font-size: 1rem;
             color: #999;
@@ -215,7 +253,7 @@
             font-weight: 300;
             text-align: center;
         }
-        
+
         .invitation-text {
             font-size: 0.9rem;
             color: #666;
@@ -224,14 +262,14 @@
             font-style: italic;
             max-width: 300px;
         }
-        
+
         .back-content {
             display: flex;
             flex-direction: column;
             justify-content: center;
             height: 100%;
         }
-        
+
         .back-flip-hint {
             position: absolute;
             bottom: 10px;
@@ -243,25 +281,21 @@
             opacity: 0.7;
             display: none;
         }
-        
+
         @media (max-width: 480px) {
             .flip-card {
                 width: 350px;
                 height: 450px;
             }
-            
             .wedding-card {
                 padding: 30px 20px;
             }
-            
             .names {
                 font-size: 2rem;
             }
-            
             .heart {
                 font-size: 2rem;
             }
-            
             .date-time {
                 font-size: 1rem;
             }
@@ -269,14 +303,15 @@
     </style>
 </head>
 <body>
-    <div class="flip-card" id="flipCard" onclick="flipCard()">
+    <div class="flip-card" id="flipCard">
         <div class="flip-card-inner">
             <!-- Front Side -->
             <div class="flip-card-front">
                 <div class="wedding-card">
                     <div class="decorative-border"></div>
                     <div class="language-selector">
-                        <select id="languageSelect" onchange="changeLanguage(this.value)" onclick="event.stopPropagation()">
+                        <!-- No inline handlers -->
+                        <select id="languageSelect">
                             <option value="auto">Auto</option>
                             <option value="en">English</option>
                             <option value="kr">한국어</option>
@@ -286,47 +321,47 @@
                     </div>
                     <div class="floral-accent">🌸</div>
                     <div class="floral-accent">🌿</div>
-                    
+
                     <div class="content">
                         <div class="invitation-header" id="frontHeader" style="display: none;">Wedding Invitation</div>
-                        
+
                         <div class="names" id="groomName">Kamoliddin</div>
                         <div class="heart">♥</div>
                         <div class="names" id="brideName">Gulirukhsor</div>
                         <div style="margin-bottom: 30px;"></div>
-                        
+
                         <div class="flip-hint" id="flipHint">Click to see details</div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Back Side -->
             <div class="flip-card-back">
                 <div class="wedding-card">
                     <div class="decorative-border"></div>
                     <div class="floral-accent">🌸</div>
                     <div class="floral-accent">🌿</div>
-                    
+
                     <div class="content back-content">
                         <div class="invitation-header" id="invitationHeader">Wedding Invitation</div>
-                        
+
                         <div class="divider"></div>
 
                         <div class="invitation-text" id="invitationText">
                             We joyfully request your presence at our wedding ceremony
                         </div>
-                        
+
                         <div class="divider"></div>
-                        
+
                         <div class="date-time" id="dateTime">
                             September 12, 2025, Friday, 1:00 PM
                         </div>
-                        
+
                         <div class="venue" id="venue">
                             Sardor Wedding Hall<br>
                             Fergana, Uzbekistan
                         </div>
-                        
+
                         <div class="back-flip-hint" id="backFlipHint">Click to go back</div>
                     </div>
                 </div>
@@ -335,6 +370,7 @@
     </div>
 
     <script>
+        /* -------- Translations -------- */
         const translations = {
             en: {
                 title: "Kamoliddin & Gulirukhsor Wedding Day",
@@ -377,7 +413,7 @@
                 frontHeader: "Свадебное приглашение",
                 invitationHeader: "Свадебное приглашение",
                 groomName: "Kamoliddin",
-                brideName: "Guliruxsor",
+                brideName: "Gulirukhsor",
                 invitationText: "С радостью приглашаем Вас разделить с нами этот торжественный день",
                 dateTime: "12 сентября 2025, пятница<br>13:00",
                 venue: "Свадебный зал Сардор<br>Фергана, Узбекистан",
@@ -386,73 +422,124 @@
             }
         };
 
+        /* Safe localStorage wrapper (iOS private mode) */
+        const safeStorage = {
+            get(key) {
+                try { return localStorage.getItem(key); } catch { return null; }
+            },
+            set(key, val) {
+                try { localStorage.setItem(key, val); } catch { /* ignore */ }
+            }
+        };
+
         function detectLanguage() {
-            const browserLang = navigator.language || navigator.languages[0];
+            const browserLang = navigator.language || (navigator.languages && navigator.languages[0]) || 'en';
             const langCode = browserLang.toLowerCase();
-            
             if (langCode.includes('ko')) return 'kr';
             if (langCode.includes('uz')) return 'uz';
             if (langCode.includes('ru')) return 'ru';
             return 'en';
         }
 
-        function flipCard() {
-            const card = document.getElementById('flipCard');
-            card.classList.toggle('flipped');
-        }
-
         function changeLanguage(lang) {
             if (lang === 'auto') {
                 lang = detectLanguage();
             }
-            
-            const translation = translations[lang];
-            if (!translation) return;
-            
-            // Update content
-            document.getElementById('frontHeader').textContent = translation.frontHeader;
-            document.getElementById('invitationHeader').textContent = translation.invitationHeader;
-            document.getElementById('invitationText').textContent = translation.invitationText;
-            document.getElementById('dateTime').innerHTML = translation.dateTime;
-            document.getElementById('venue').innerHTML = translation.venue;
-            document.getElementById('flipHint').textContent = translation.flipHint;
-            document.getElementById('backFlipHint').textContent = translation.backFlipHint;
-            document.title = translation.title;
-            
-            const groomNameElement = document.getElementById('groomName');
-            if (groomNameElement && translation.groomName) {
-                groomNameElement.textContent = translation.groomName;
-            }
-            
-            const brideNameElement = document.getElementById('brideName');
-            if (brideNameElement && translation.brideName) {
-                brideNameElement.textContent = translation.brideName;
-            }
-            
-            // Update body data attribute for font family
+            const t = translations[lang];
+            if (!t) return;
+
+            /* Update content */
+            const frontHeaderEl = document.getElementById('frontHeader');
+            if (frontHeaderEl) frontHeaderEl.textContent = t.frontHeader;
+
+            const invitationHeaderEl = document.getElementById('invitationHeader');
+            if (invitationHeaderEl) invitationHeaderEl.textContent = t.invitationHeader;
+
+            const invitationTextEl = document.getElementById('invitationText');
+            if (invitationTextEl) invitationTextEl.textContent = t.invitationText;
+
+            const dateTimeEl = document.getElementById('dateTime');
+            if (dateTimeEl) dateTimeEl.innerHTML = t.dateTime;
+
+            const venueEl = document.getElementById('venue');
+            if (venueEl) venueEl.innerHTML = t.venue;
+
+            const flipHintEl = document.getElementById('flipHint');
+            if (flipHintEl) flipHintEl.textContent = t.flipHint;
+
+            const backFlipHintEl = document.getElementById('backFlipHint');
+            if (backFlipHintEl) backFlipHintEl.textContent = t.backFlipHint;
+
+            const groomEl = document.getElementById('groomName');
+            if (groomEl && t.groomName) groomEl.textContent = t.groomName;
+
+            const brideEl = document.getElementById('brideName');
+            if (brideEl && t.brideName) brideEl.textContent = t.brideName;
+
+            document.title = t.title;
             document.body.setAttribute('data-lang', lang);
-            
-            // Store language preference
-            localStorage.setItem('preferredLanguage', lang);
+
+            /* persist */
+            safeStorage.set('preferredLanguage', lang);
         }
 
         function initializeLanguage() {
-            const savedLang = localStorage.getItem('preferredLanguage');
+            const select = document.getElementById('languageSelect');
+            const savedLang = safeStorage.get('preferredLanguage');
             let currentLang;
-            
+
             if (savedLang && savedLang !== 'auto') {
                 currentLang = savedLang;
-                document.getElementById('languageSelect').value = savedLang;
+                if (select) select.value = savedLang;
             } else {
                 currentLang = detectLanguage();
-                document.getElementById('languageSelect').value = 'auto';
+                if (select) select.value = 'auto';
             }
-            
             changeLanguage(currentLang);
         }
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', initializeLanguage);
+        document.addEventListener('DOMContentLoaded', function () {
+            const flipCard = document.getElementById('flipCard');
+            const languageSelect = document.getElementById('languageSelect');
+
+            /* Initialize translation */
+            initializeLanguage();
+
+            /* Robust handlers for iOS Safari */
+            if (languageSelect) {
+                /* Fire immediately on change or selection interactions */
+                const fireLangUpdate = () => changeLanguage(languageSelect.value);
+
+                languageSelect.addEventListener('change', fireLangUpdate);
+                languageSelect.addEventListener('input', fireLangUpdate);
+                languageSelect.addEventListener('blur', fireLangUpdate);
+                languageSelect.addEventListener('touchend', fireLangUpdate);
+
+                /* Make sure interacting with the select never flips the card */
+                ['click', 'touchstart', 'pointerdown', 'mousedown'].forEach(evt => {
+                    languageSelect.addEventListener(evt, function (e) {
+                        e.stopPropagation();
+                    }, true); // capture phase to intercept early
+                });
+            }
+
+            /* Flip only when not interacting with UI controls */
+            if (flipCard) {
+                flipCard.addEventListener('click', function (e) {
+                    if (e.target.closest('.language-selector')) return;
+                    flipCard.classList.toggle('flipped');
+                });
+
+                /* Optional: keyboard accessibility */
+                flipCard.setAttribute('tabindex', '0');
+                flipCard.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        flipCard.classList.toggle('flipped');
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
