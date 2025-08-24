@@ -444,7 +444,7 @@
                         <div class="names" id="brideName">Gulirukhsor</div>
                         <div style="margin-bottom: 30px;"></div>
 
-                        <div class="flip-hint" id="flipHint">Click to see details</div>
+                        <div class="flip-hint" id="flipHint"><!-- Content will be set by JS --></div>
                     </div>
                 </div>
             </div>
@@ -457,23 +457,22 @@
                     <div class="floral-accent">🌿</div>
 
                     <div class="content back-content">
-                        <div class="invitation-header" id="invitationHeader">Wedding Invitation</div>
+                        <div class="invitation-header" id="invitationHeader"><!-- Content will be set by JS --></div>
 
                         <div class="divider"></div>
 
                         <div class="invitation-text" id="invitationText">
-                            We joyfully request your presence at our wedding ceremony
+                            <!-- Content will be set by JS -->
                         </div>
 
                         <div class="divider"></div>
 
                         <div class="date-time" id="dateTime">
-                            September 12, 2025<br />Friday, 1:00 PM
+                            <!-- Content will be set by JS -->
                         </div>
 
                         <div class="venue" id="venue">
-                            Sardor Wedding Hall<br>
-                            Fergana, Uzbekistan
+                            <!-- Content will be set by JS -->
                         </div>
 
                         <div class="back-flip-hint" id="backFlipHint">Click to go back</div>
@@ -490,15 +489,18 @@
             const mainContent = document.getElementById('mainContent');
             
             if (loadingOverlay && mainContent) {
-                loadingOverlay.classList.add('hidden');
-                mainContent.classList.add('loaded');
-                
-                // Remove loader after animation
+                // Small delay to ensure all DOM updates are complete
                 setTimeout(() => {
-                    if (loadingOverlay.parentNode) {
-                        loadingOverlay.parentNode.removeChild(loadingOverlay);
-                    }
-                }, 500);
+                    loadingOverlay.classList.add('hidden');
+                    mainContent.classList.add('loaded');
+                    
+                    // Remove loader after animation
+                    setTimeout(() => {
+                        if (loadingOverlay.parentNode) {
+                            loadingOverlay.parentNode.removeChild(loadingOverlay);
+                        }
+                    }, 500);
+                }, 50);
             }
         }
 
