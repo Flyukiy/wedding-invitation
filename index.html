@@ -415,6 +415,11 @@
     <!-- Fireworks Container -->
     <div class="fireworks-container" id="fireworksContainer"></div>
 
+    <!-- Background Music (only for bride page) -->
+    <audio id="backgroundMusic" style="display: none;" preload="auto" loop>
+        <source src="./music.mp3" type="audio/mpeg">
+    </audio>
+
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
         <div class="flip-card" id="flipCard">
@@ -483,6 +488,95 @@
     </div>
 
     <script>
+        /* -------- Audio Functions -------- */
+        function initializeAudio() {
+            if (!isBridePage()) return;
+
+            const audio = document.createElement('audio');
+            audio.id = 'backgroundMusic';
+            audio.src = './music.mp3';
+            audio.loop = true;
+            audio.volume = 0; // Start muted
+            audio.preload = 'auto';
+            
+            // Hide audio element
+            audio.style.display = 'none';
+            document.body.appendChild(audio);
+
+            // Handle loading errors gracefully
+            audio.addEventListener('error', function(e) {
+                console.log('Audio file not found or failed to load:', e);
+            });
+
+            audio.addEventListener('canplay', function() {
+                console.log('Audio loaded successfully');
+            });
+
+            return audio;
+        }
+
+        function startBackgroundMusic() {
+            if (!isBridePage()) return;
+
+            const audio = document.getElementById('backgroundMusic');
+            if (!audio) return;
+
+            // Set initial properties
+            audio.volume = 0;
+
+            // Create a unified click handler that works for all interactions
+            const startAudioOnInteraction = () => {
+                audio.play().then(() => {
+                    console.log('Background music started on user interaction');
+                    fadeInAudio(audio, 0.2, 2000);
+                }).catch(e => {
+                    console.log('Audio play failed:', e);
+                });
+            };
+
+            // Try autoplay first (might work in some cases)
+            audio.play().then(() => {
+                console.log('Background music autoplay successful');
+                fadeInAudio(audio, 0.2, 2000);
+            }).catch(() => {
+                console.log('Autoplay blocked - waiting for user interaction');
+                
+                // Add listeners for multiple interaction types
+                const events = ['click', 'touchstart', 'keydown', 'touchend'];
+                const playOnInteraction = () => {
+                    startAudioOnInteraction();
+                    // Remove all listeners after first interaction
+                    events.forEach(event => {
+                        document.removeEventListener(event, playOnInteraction);
+                    });
+                };
+
+                // Add listeners for any user interaction
+                events.forEach(event => {
+                    document.addEventListener(event, playOnInteraction, { once: true });
+                });
+            });
+        }
+
+        function fadeInAudio(audio, targetVolume, duration) {
+            if (!audio) return;
+
+            const startVolume = 0;
+            const volumeStep = targetVolume / (duration / 50); // 50ms intervals
+            let currentVolume = startVolume;
+
+            audio.volume = startVolume;
+
+            const fadeInterval = setInterval(() => {
+                currentVolume += volumeStep;
+                if (currentVolume >= targetVolume) {
+                    currentVolume = targetVolume;
+                    clearInterval(fadeInterval);
+                }
+                audio.volume = Math.min(currentVolume, 1); // Cap at 1.0
+            }, 50);
+        }
+
         /* -------- Loading and Fireworks Functions -------- */
         function hideLoader() {
             const loadingOverlay = document.getElementById('loadingOverlay');
@@ -493,6 +587,11 @@
                 setTimeout(() => {
                     loadingOverlay.classList.add('hidden');
                     mainContent.classList.add('loaded');
+                    
+                    // Start background music after spinner disappears (bride page only)
+                    if (isBridePage()) {
+                        startBackgroundMusic();
+                    }
                     
                     // Remove loader after animation
                     setTimeout(() => {
@@ -734,7 +833,7 @@
             const flipCard = document.getElementById('flipCard');
             const languageSelect = document.getElementById('languageSelect');
             let hasFlippedToBack = false;
-
+            
             /* Initialize translation */
             initializeLanguage();
 
